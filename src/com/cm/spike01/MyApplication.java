@@ -14,7 +14,5 @@ public class MyApplication extends Application {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		singleton = this;
-	}
-	
-	
+	}	
 }

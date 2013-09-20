@@ -1,14 +1,19 @@
 package com.cm.spike01;
 
 import com.cm.spike01.util.SystemUiHider;
+import com.google.android.gms.auth.GoogleAuthUtil;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -44,6 +49,8 @@ public class FullscreenActivity extends Activity {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+
+	private Activity self = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +123,7 @@ public class FullscreenActivity extends Activity {
 		// while interacting with the UI.
 		findViewById(R.id.dummy_button).setOnTouchListener(
 				mDelayHideTouchListener);
+		findViewById(R.id.dummy_button).setOnClickListener(mDummyButtonClickListner);
 	}
 
 	@Override
@@ -143,6 +151,21 @@ public class FullscreenActivity extends Activity {
 		}
 	};
 
+	View.OnClickListener mDummyButtonClickListner = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Log.e("woohoo", "asshole");
+			AccountManager mAccountManager = AccountManager.get(self);
+			Account[] accounts = mAccountManager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+			String[] names = new String[accounts.length];
+			for (int i = 0; i < names.length; i++) {
+				names[i] = accounts[i].name;
+				Log.e("Account", names[i]);
+			}
+		}
+	};
+	
 	Handler mHideHandler = new Handler();
 	Runnable mHideRunnable = new Runnable() {
 		@Override
