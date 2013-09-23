@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -50,7 +53,7 @@ public class FullscreenActivity extends Activity {
 	 */
 	private SystemUiHider mSystemUiHider;
 
-	private Activity self = this;
+	private FullscreenActivity self = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class FullscreenActivity extends Activity {
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-
+		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -123,7 +126,9 @@ public class FullscreenActivity extends Activity {
 		// while interacting with the UI.
 		findViewById(R.id.dummy_button).setOnTouchListener(
 				mDelayHideTouchListener);
-		findViewById(R.id.dummy_button).setOnClickListener(mDummyButtonClickListner);
+		findViewById(R.id.dummy_button).setOnClickListener(
+				mDummyButtonClickListner);
+		((ListView)findViewById(R.id.accounts_list)).setOnItemClickListener(mAccountsViewItemClickListner);
 	}
 
 	@Override
@@ -158,11 +163,26 @@ public class FullscreenActivity extends Activity {
 			Log.e("woohoo", "asshole");
 			AccountManager mAccountManager = AccountManager.get(self);
 			Account[] accounts = mAccountManager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-			String[] names = new String[accounts.length];
-			for (int i = 0; i < names.length; i++) {
-				names[i] = accounts[i].name;
-				Log.e("Account", names[i]);
+			ListView accountsListView = (ListView) self.findViewById(R.id.accounts_list);
+			
+			ArrayAdapter<String> accountsAdapter = new ArrayAdapter<String>(self, android.R.layout.simple_list_item_1);
+
+			for (int i = 0; i < accounts.length; i++) {
+				accountsAdapter.add(accounts[i].name);
+				Log.e("Account", accounts[i].name);
 			}
+			
+			
+			accountsListView.setAdapter(accountsAdapter);
+		}
+	};
+	
+	ListView.OnItemClickListener mAccountsViewItemClickListner = new ListView.OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int viewPosition,
+				long rowId) {
+			Log.e("accountsViewItemClicked", parent.getAdapter().getItem((int) rowId).toString());
+			
 		}
 	};
 	

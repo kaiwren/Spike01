@@ -10,7 +10,6 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc.
     -->
-
     <TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
@@ -31,7 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
-
+			
+        
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?buttonBarStyle"
@@ -39,18 +39,24 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:background="@color/black_overlay"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             tools:ignore="UselessParent" >
-
+			
+            <ListView
+			    android:id="@+id/accounts_list"
+			    android:layout_width="match_parent"
+			    android:layout_height="200dip" />
+            
             <Button
                 android:id="@+id/dummy_button"
                 style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+
     </FrameLayout>
 
 </FrameLayout>
