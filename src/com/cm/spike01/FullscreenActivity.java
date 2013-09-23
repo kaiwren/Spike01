@@ -1,15 +1,23 @@
 package com.cm.spike01;
 
+import java.io.IOException;
+
 import com.cm.spike01.util.SystemUiHider;
 import com.google.android.gms.auth.GoogleAuthUtil;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -181,8 +189,51 @@ public class FullscreenActivity extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int viewPosition,
 				long rowId) {
-			Log.e("accountsViewItemClicked", parent.getAdapter().getItem((int) rowId).toString());
+			String accountId = parent.getAdapter().getItem((int) rowId).toString();
+			Log.e("accountsViewItemClicked", accountId);
+			AccountManager am = AccountManager.get(self);
+			Bundle options = new Bundle();
+			Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+			Account account = null;
+			for (int i = 0; i < accounts.length; i++) {
+				if(accounts[i].name.equals(accountId)){
+					account = accounts[i];
+					break;
+				}
+			}
+
 			
+			am.getAuthToken(
+			    account,                     
+			    "Manage your tasks",            
+			    options,                        
+			    self,
+			    new AccountManagerCallback<Bundle>(){
+
+					@Override
+					public void run(AccountManagerFuture<Bundle> result) {
+						
+						Bundle bundle = null;
+						try {
+							bundle = result.getResult();
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					    
+				        // The token is a named value in the bundle. The name of the value
+				        // is stored in the constant AccountManager.KEY_AUTHTOKEN.
+				        Log.e("token", bundle.getString(AccountManager.KEY_AUTHTOKEN));
+
+					}
+			    	
+			    },
+			    new Handler(new Callback(){
+					@Override
+					public boolean handleMessage(Message arg0) {
+						Log.e("auth callback", "fail");
+						return false;
+					}})
+			    );
 		}
 	};
 	
